@@ -5,6 +5,16 @@ const io = new ioServer({
   },
 });
 
-io.on("connection", (socket) => {});
+let currentDoc = "";
+
+io.on("connection", (socket) => {
+  socket.emit("docChange", currentDoc);
+
+  // fire off docChange when any change to doc (val)
+  socket.on("inputChange", (val) => {
+    currentDoc = val;
+    socket.broadcast.emit("docChange", val);
+  });
+});
 
 io.listen(8000);
